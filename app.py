@@ -123,8 +123,9 @@ def abrir_control_diario():
 def abrir_distribucion_mensual():
     ventana_mensual = tk.Toplevel(root)
     ventana_mensual.title("Proyección y Escenarios Personalizados")
-    ventana_mensual.geometry("540x690")
+    ventana_mensual.geometry("760x520")
     ventana_mensual.resizable(False, False)
+    ventana_mensual.configure(bg="#e5eef7")
 
     fuente_titulo = ("Segoe UI", 13, "bold")
     fuente_sub = ("Segoe UI", 11, "bold")
@@ -138,22 +139,37 @@ def abrir_distribucion_mensual():
         text="Planificación Mensual de Horas",
         font=fuente_titulo,
         fg="#274e13",
-    ).pack(pady=10)
+        bg="#e5eef7",
+    ).pack(pady=12)
+
+    # --- CONTENEDORES PRINCIPALES HORIZONTALES ---
+    frame_content = tk.Frame(ventana_mensual, bg="#e5eef7")
+    frame_content.pack(fill="both", expand=True, padx=12, pady=8)
+
+    frame_left = tk.Frame(frame_content, bg="#ffffff", bd=1, relief="solid")
+    frame_right = tk.Frame(frame_content, bg="#ffffff", bd=1, relief="solid")
+
+    frame_left.grid(row=0, column=0, sticky="nsew", padx=(0, 10), pady=5)
+    frame_right.grid(row=0, column=1, sticky="nsew", pady=5)
+
+    frame_content.grid_columnconfigure(0, weight=1)
+    frame_content.grid_columnconfigure(1, weight=1)
+    frame_content.grid_rowconfigure(0, weight=1)
 
     # --- FORMULARIO PRINCIPAL BASE ---
-    frame_form = tk.Frame(ventana_mensual)
-    frame_form.pack(pady=5)
+    frame_form = tk.Frame(frame_left, bg="#ffffff")
+    frame_form.pack(fill="x", pady=(10, 8), padx=10)
 
     campos = [
         ("Cantidad de días trabajados:", "dias_trabajados", "10"),
-        ("Horario oficial (horas a trabajar):", "horario_oficial", "8"),
+        ("Horario oficial (HH:MM[:SS]):", "horario_oficial", "08:00"),
         ("Cantidad de días hábiles del mes:", "dias_habiles", "22"),
-        ("Promedio de horas trabajadas (HH:MM:SS):", "promedio_trabajado", "07:30:00"),
+        ("Promedio de horas trabajadas (HH:MM[:SS]):", "promedio_trabajado", "07:30"),
     ]
 
     entries = {}
     for idx, (label_text, key, defecto) in enumerate(campos):
-        tk.Label(frame_form, text=label_text, font=fuente, anchor="w").grid(
+        tk.Label(frame_form, text=label_text, font=fuente, anchor="w", bg="#ffffff").grid(
             row=idx, column=0, sticky="w", pady=3, padx=10
         )
         entry = tk.Entry(frame_form, width=11, justify="center", font=fuente)
@@ -162,10 +178,10 @@ def abrir_distribucion_mensual():
         entries[key] = entry
 
     # Selector de asistencia total
-    frame_check = tk.Frame(ventana_mensual)
-    frame_check.pack(pady=5)
+    frame_check = tk.Frame(frame_left, bg="#ffffff")
+    frame_check.pack(fill="x", pady=5, padx=10)
 
-    tk.Label(frame_check, text="¿Vas a cumplir todos los días hábiles?", font=fuente).pack(anchor="w", padx=10)
+    tk.Label(frame_check, text="¿Vas a cumplir todos los días hábiles?", font=fuente, bg="#ffffff").pack(anchor="w")
     var_cumplir = tk.StringVar(value="SÍ")
 
     def toggle_dias_restar():
@@ -181,26 +197,28 @@ def abrir_distribucion_mensual():
     rb_si.pack(side="left", padx=35)
     rb_no.pack(side="left", padx=35)
 
-    frame_restar = tk.Frame(ventana_mensual)
-    tk.Label(frame_restar, text="¿Cuántos días le restamos a los hábiles?:", font=fuente).grid(row=0, column=0, padx=5)
+    frame_restar = tk.Frame(frame_left, bg="#ffffff")
+    tk.Label(frame_restar, text="¿Cuántos días le restamos a los hábiles?:", font=fuente, bg="#ffffff").grid(row=0, column=0, padx=5)
     entry_restar = tk.Entry(frame_restar, width=6, justify="center", font=fuente)
     entry_restar.grid(row=0, column=1)
     entry_restar.insert(0, "0")
 
     # --- TEXT BOX REUTILIZABLE PARA MOSTRAR LOS RESULTADOS ---
     txt_resultados = tk.Text(
-        ventana_mensual, width=64, height=13, font=("Consolas", 10),
-        bg="#f9fbf9", bd=1, relief="solid", state="disabled"
+        frame_right, width=40, height=20, font=("Consolas", 10),
+        bg="#f9fbf9", bd=0, relief="flat", state="disabled", wrap="word"
     )
 
     # --- ELEMENTOS DEL SUBMENÚ DE ESCENARIO OPCIONAL (OCULTOS AL INICIO) ---
-    frame_opcional = tk.LabelFrame(ventana_mensual, text=" Escenario Personalizado Opcional ", font=fuente_sub, fg="#0b5394")
-    
-    tk.Label(frame_opcional, text="Horario a cumplir estándar (HH:MM:SS):", font=fuente).grid(row=0, column=0, padx=10, pady=5, sticky="w")
+    frame_opcional = tk.LabelFrame(frame_left, text=" Escenario Personalizado Opcional ", font=fuente_sub, fg="#0b5394", bg="#ffffff", bd=0)
+    frame_opcional.pack(fill="x", pady=10, padx=10)
+    frame_opcional.configure(labelanchor="nw")
+
+    tk.Label(frame_opcional, text="Horario a cumplir estándar (HH:MM[:SS]):", font=fuente, bg="#ffffff").grid(row=0, column=0, padx=10, pady=5, sticky="w")
     entry_h_custom = tk.Entry(frame_opcional, width=11, justify="center", font=fuente)
     entry_h_custom.grid(row=0, column=1, padx=10, pady=5)
     
-    lbl_dias_ajuste_texto = tk.Label(frame_opcional, text="Cantidad de días de ajuste:", font=fuente)
+    lbl_dias_ajuste_texto = tk.Label(frame_opcional, text="Cantidad de días de ajuste:", font=fuente, bg="#ffffff")
     lbl_dias_ajuste_texto.grid(row=1, column=0, padx=10, pady=5, sticky="w")
     entry_dias_ajuste = tk.Entry(frame_opcional, width=11, justify="center", font=fuente)
     entry_dias_ajuste.grid(row=1, column=1, padx=10, pady=5)
@@ -214,23 +232,51 @@ def abrir_distribucion_mensual():
         seg = segundos % 60
         return f"{'-' if es_negativo else ''}{horas:02d}:{minutos:02d}:{seg:02d}"
 
+    def parse_tiempo_input(cadena, nombre, parent):
+        cadena = cadena.strip()
+        if not cadena:
+            raise ValueError(f"{nombre} no puede quedar vacío.")
+
+        if ":" not in cadena:
+            try:
+                return timedelta(hours=float(cadena))
+            except ValueError:
+                raise ValueError(f"{nombre} debe ser un número o un tiempo en formato HH:MM[:SS].")
+
+        partes = cadena.count(":")
+        if partes == 1:
+            formato = "%H:%M"
+        elif partes == 2:
+            formato = "%H:%M:%S"
+        else:
+            raise ValueError(f"{nombre} debe usar HH:MM o HH:MM:SS.")
+
+        try:
+            partes_hora = datetime.strptime(cadena, formato)
+            return timedelta(
+                hours=partes_hora.hour,
+                minutes=partes_hora.minute,
+                seconds=partes_hora.second,
+            )
+        except ValueError:
+            raise ValueError(f"{nombre} debe usar el formato HH:MM o HH:MM:SS.")
+
     # --- ACCIÓN 1: CALCULA EL ESCENARIO BASE (UNIFORME) ---
     def calcular_escenario_base():
         try:
             d_trabajados = int(entries["dias_trabajados"].get())
-            h_oficial = float(entries["horario_oficial"].get())
+            h_oficial_td = parse_tiempo_input(entries["horario_oficial"].get(), "Horario oficial", ventana_mensual)
             d_habiles = int(entries["dias_habiles"].get())
             str_promedio = entries["promedio_trabajado"].get().strip()
             d_restar = int(entry_restar.get()) if var_cumplir.get() == "NO" else 0
         except ValueError:
-            messagebox.showerror("Error", "Por favor, ingresá valores numéricos válidos.", parent=ventana_mensual)
+            messagebox.showerror("Error", "Por favor, ingresá valores numéricos válidos o tiempos en formato HH:MM[:SS].", parent=ventana_mensual)
             return
 
         try:
-            partes_hora = datetime.strptime(str_promedio, "%H:%M:%S")
-            promedio_td = timedelta(hours=partes_hora.hour, minutes=partes_hora.minute, seconds=partes_hora.second)
-        except ValueError:
-            messagebox.showerror("Error", "El formato del promedio debe ser HH:MM:SS (Ej: 07:30:00).", parent=ventana_mensual)
+            promedio_td = parse_tiempo_input(str_promedio, "Promedio de horas trabajadas", ventana_mensual)
+        except ValueError as e:
+            messagebox.showerror("Error", str(e), parent=ventana_mensual)
             return
 
         dias_habiles_reales = d_habiles - d_restar
@@ -240,14 +286,14 @@ def abrir_distribucion_mensual():
             messagebox.showerror("Error", "Los días gestionados superan los días hábiles del mes.", parent=ventana_mensual)
             return
 
-        horas_totales_objetivo_td = timedelta(hours=dias_habiles_reales * h_oficial)
+        horas_totales_objetivo_td = h_oficial_td * dias_habiles_reales
         horas_ya_hechas_td = promedio_td * d_trabajados
         horas_faltantes_td = horas_totales_objetivo_td - horas_ya_hechas_td
 
         # Guardar en memoria interna para cruzar los datos con la acción secundaria
         valores_calculados.update({
             "dias_restantes": dias_restantes,
-            "h_oficial": h_oficial,
+            "h_oficial": h_oficial_td,
             "segundos_faltantes": horas_faltantes_td.total_seconds()
         })
 
@@ -315,15 +361,15 @@ def abrir_distribucion_mensual():
         str_h_custom = entry_h_custom.get().strip()
         if str_h_custom == "":
             # Si se deja vacío, toma el Horario Oficial de forma predeterminada
-            seg_dia_estandar = h_oficial * 3600
+            seg_dia_estandar = h_oficial.total_seconds()
             texto_regimen = "Horario Oficial"
         else:
             try:
-                p_custom = datetime.strptime(str_h_custom, "%H:%M:%S")
-                seg_dia_estandar = (p_custom.hour * 3600) + (p_custom.minute * 60) + p_custom.second
+                horario_custom_td = parse_tiempo_input(str_h_custom, "Horario personalizado", ventana_mensual)
+                seg_dia_estandar = horario_custom_td.total_seconds()
                 texto_regimen = f"Fijo personalizado ({str_h_custom})"
-            except ValueError:
-                messagebox.showerror("Error", "El horario personalizado debe usar el formato HH:MM:SS.", parent=ventana_mensual)
+            except ValueError as e:
+                messagebox.showerror("Error", str(e), parent=ventana_mensual)
                 return
 
         # Cálculo matemático del reparto
@@ -352,20 +398,22 @@ def abrir_distribucion_mensual():
 
     # Botón de Procesamiento Inicial
     btn_calc_base = tk.Button(
-        ventana_mensual, text="CALCULAR DISTRIBUCIÓN BASE", font=("Segoe UI", 11, "bold"),
-        bg="#274e13", fg="white", activebackground="#1e3b0f", padx=12, pady=4,
-        command=calcular_escenario_base
+        frame_right, text="CALCULAR DISTRIBUCIÓN BASE", font=("Segoe UI", 11, "bold"),
+        bg="#274e13", fg="white", activebackground="#1e3b0f", padx=12, pady=8,
+        command=calcular_escenario_base,
+        relief="flat"
     )
-    btn_calc_base.pack(pady=5)
+    btn_calc_base.pack(fill="x", pady=(10, 0), padx=10)
 
-    # El cuadro de resultados aparece fijo en el centro
-    txt_resultados.pack(pady=5, padx=15)
+    tk.Label(frame_right, text="Resultados", font=fuente_sub, bg="#ffffff", fg="#274e13").pack(anchor="w", padx=10, pady=(12, 0))
+    txt_resultados.pack(fill="both", expand=True, pady=10, padx=10)
 
     # Botón secundario ubicado adentro del panel dinámico desplegable
     btn_calc_custom = tk.Button(
         frame_opcional, text="Aplicar Escenario Combinado", font=("Segoe UI", 10, "bold"),
-        bg="#0b5394", fg="white", activebackground="#073763", padx=8, pady=2,
-        command=calcular_escenario_personalizado
+        bg="#0b5394", fg="white", activebackground="#073763", padx=8, pady=6,
+        command=calcular_escenario_personalizado,
+        relief="flat"
     )
     btn_calc_custom.grid(row=2, column=0, columnspan=2, pady=8)
 
